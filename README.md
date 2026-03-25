@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DxCoach
 
-## Getting Started
+A Socratic clinical reasoning coach for medical students, built by the AI in Medicine Club at Western University of Health Sciences.
 
-First, run the development server:
+**Your Thinking First. Evidence Second. AI Third.**
+
+## What It Does
+
+DxCoach acts as a supportive senior resident — it coaches students through clinical cases without ever giving away the diagnosis. Three modes:
+
+- **Practice a Case** — Pre-loaded cases with progressive disclosure (PE vs. ADHF and more to come)
+- **Generate a Case** — Tell DxCoach an organ system or chief complaint and it builds a custom case
+- **Present to Your Attending** — Practice presenting a de-identified real patient case; get attending-style pushback
+
+## Stack
+
+- Next.js (App Router) + TypeScript + Tailwind CSS
+- Anthropic Claude Sonnet 4 (`claude-sonnet-4-20250514`)
+- Deployed on Vercel (serverless, no database)
+
+## Local Development
+
+1. Clone the repo
+2. Install dependencies: `npm install`
+3. Create `.env.local` with your Anthropic API key:
+   ```
+   ANTHROPIC_API_KEY=sk-ant-...
+   ```
+4. Run: `npm run dev`
+5. Open http://localhost:3000
+
+## Deploy to Vercel
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npx vercel
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Set `ANTHROPIC_API_KEY` in Vercel Dashboard → Project → Settings → Environment Variables.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Adding New Cases
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create a new file in `lib/cases/`, export a case object following the shape in `lib/cases/pe-vs-adhf.ts`, then add it to the `CASES` array. The `CaseSelector` component will pick it up automatically.
 
-## Learn More
+## Cost
 
-To learn more about Next.js, take a look at the following resources:
+~$17/month at 50 students × 2 sessions/week. `max_tokens: 1024` is a hard cost control — do not increase without explicit decision.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Architecture
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See `DxCoach_Technical_Plan.md` for the full architecture reference.
