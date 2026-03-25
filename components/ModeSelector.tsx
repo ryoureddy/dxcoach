@@ -35,43 +35,44 @@ const modes = [
 
 export default function ModeSelector({ onSelect }: ModeSelectorProps) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-4 py-12 bg-gray-950">
+    <div className="flex flex-col items-center justify-center min-h-screen px-4 py-16 bg-[var(--color-bg)]">
       {/* Header */}
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-white tracking-tight mb-2">
+      <div className="text-center mb-16">
+        <h1 className="text-5xl font-medium tracking-tight mb-3 text-[var(--color-text-primary)]">
           DxCoach
         </h1>
-        <p className="text-gray-400 text-lg font-medium">
+        <p className="text-lg font-medium text-[var(--color-text-secondary)]">
           Your Thinking First. Evidence Second. AI Third.
         </p>
-        <p className="text-gray-600 text-sm mt-2">
+        <p className="text-sm mt-3 text-[var(--color-text-muted)]">
           AI in Medicine Club · Western University of Health Sciences
         </p>
       </div>
 
       {/* Mode cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-4xl">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl">
         {modes.map((mode) => (
           <button
             key={mode.id}
             onClick={() => onSelect(mode.id)}
-            className="group flex flex-col text-left p-6 rounded-2xl border border-gray-800 bg-gray-900 hover:border-blue-500 hover:bg-gray-800 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="group flex flex-col text-left p-7 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-primary)] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+            style={{ boxShadow: "var(--shadow-soft)" }}
           >
             <span className="text-3xl mb-4">{mode.icon}</span>
-            <span className="inline-block text-xs font-semibold text-blue-400 uppercase tracking-wider mb-2">
+            <span className="inline-block text-xs font-semibold text-[var(--color-primary)] uppercase tracking-wider mb-2">
               {mode.tag}
             </span>
-            <h2 className="text-white font-semibold text-lg mb-2 group-hover:text-blue-300 transition-colors">
+            <h2 className="font-semibold text-lg mb-2 text-[var(--color-text-primary)] group-hover:text-[var(--color-primary)] transition-colors">
               {mode.title}
             </h2>
-            <p className="text-gray-400 text-sm leading-relaxed">
+            <p className="text-sm leading-relaxed text-[var(--color-text-secondary)]">
               {mode.description}
             </p>
           </button>
         ))}
       </div>
 
-      <p className="text-gray-600 text-xs mt-10 text-center max-w-md">
+      <p className="text-xs mt-12 text-center max-w-md text-[var(--color-text-muted)]">
         Never enter real patient identifiers. All sessions are ephemeral —
         nothing is stored when you close the tab.
       </p>

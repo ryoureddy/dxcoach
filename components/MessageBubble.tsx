@@ -19,7 +19,7 @@ export default function MessageBubble({
     <div className={`flex ${isUser ? "justify-end" : "justify-start"} mb-4`}>
       {/* Avatar for assistant */}
       {!isUser && (
-        <div className="shrink-0 w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold mr-3 mt-1">
+        <div className="shrink-0 w-8 h-8 rounded-full bg-[var(--color-primary)] flex items-center justify-center text-white text-xs font-bold mr-3 mt-1">
           Dx
         </div>
       )}
@@ -27,16 +27,17 @@ export default function MessageBubble({
       <div
         className={`max-w-[80%] rounded-2xl px-4 py-3 ${
           isUser
-            ? "bg-blue-600 text-white rounded-br-sm"
-            : "bg-gray-800 text-gray-100 rounded-bl-sm"
+            ? "bg-[var(--color-primary)] text-white rounded-br-sm"
+            : "bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-primary)] rounded-bl-sm"
         }`}
+        style={!isUser ? { boxShadow: "var(--shadow-soft)" } : undefined}
       >
         {isUser ? (
           <p className="text-sm leading-relaxed whitespace-pre-wrap">
             {content}
           </p>
         ) : (
-          <div className="text-sm leading-relaxed prose prose-invert prose-sm max-w-none">
+          <div className="text-sm leading-relaxed max-w-none">
             <ReactMarkdown
               components={{
                 // Style paragraphs
@@ -45,7 +46,7 @@ export default function MessageBubble({
                 ),
                 // Style bold text (key clinical terms)
                 strong: ({ children }) => (
-                  <strong className="text-blue-300 font-semibold">
+                  <strong className="text-[var(--color-primary)] font-semibold">
                     {children}
                   </strong>
                 ),
@@ -61,7 +62,7 @@ export default function MessageBubble({
                   </ol>
                 ),
                 li: ({ children }) => (
-                  <li className="text-gray-200">{children}</li>
+                  <li className="text-[var(--color-text-primary)]">{children}</li>
                 ),
                 // Tables
                 table: ({ children }) => (
@@ -72,21 +73,38 @@ export default function MessageBubble({
                   </div>
                 ),
                 th: ({ children }) => (
-                  <th className="border border-gray-600 px-2 py-1 bg-gray-700 text-left font-semibold">
+                  <th className="border border-[var(--color-border)] px-2 py-1 bg-[var(--color-surface-container-low)] text-left font-semibold">
                     {children}
                   </th>
                 ),
                 td: ({ children }) => (
-                  <td className="border border-gray-600 px-2 py-1">
+                  <td className="border border-[var(--color-border)] px-2 py-1">
                     {children}
                   </td>
+                ),
+                // Links
+                a: ({ children, href }) => (
+                  <a
+                    href={href}
+                    className="text-[var(--color-primary)] underline decoration-[var(--color-primary)]/40 hover:decoration-[var(--color-primary)] transition-colors"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {children}
+                  </a>
+                ),
+                // Inline code
+                code: ({ children }) => (
+                  <code className="bg-[var(--color-surface-container-low)] text-[var(--color-tertiary)] px-1.5 py-0.5 rounded text-xs">
+                    {children}
+                  </code>
                 ),
               }}
             >
               {content}
             </ReactMarkdown>
             {isStreaming && (
-              <span className="inline-block w-2 h-4 bg-blue-400 ml-0.5 animate-pulse rounded-sm" />
+              <span className="inline-block w-2 h-4 bg-[var(--color-primary)] ml-0.5 animate-pulse rounded-sm" />
             )}
           </div>
         )}
