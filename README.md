@@ -24,7 +24,8 @@ DxCoach acts as a supportive senior resident — it coaches students through cli
 2. Install dependencies: `npm install`
 3. Create `.env.local` with your Anthropic API key:
    ```
-   ANTHROPIC_API_KEY=sk-ant-...
+   ANTHROPIC_API_KEY=
+   
    ```
 4. Run: `npm run dev`
 5. Open http://localhost:3000
