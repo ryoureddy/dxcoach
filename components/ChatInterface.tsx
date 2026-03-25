@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, FormEvent } from "react";
+import { useState, useRef, useEffect } from "react";
 import MessageBubble from "./MessageBubble";
 
 type Mode = "practice" | "generate" | "present";
@@ -123,7 +123,7 @@ export default function ChatInterface({
     }
   }
 
-  function handleSubmit(e: FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const trimmed = input.trim();
     if (!trimmed || isLoading) return;
@@ -134,7 +134,9 @@ export default function ChatInterface({
     // Submit on Enter, newline on Shift+Enter
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSubmit(e as unknown as FormEvent);
+      const trimmed = input.trim();
+      if (!trimmed || isLoading) return;
+      sendMessage(trimmed);
     }
   }
 

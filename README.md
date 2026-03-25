@@ -45,6 +45,18 @@ Create a new file in `lib/cases/`, export a case object following the shape in `
 
 ~$17/month at 50 students × 2 sessions/week. `max_tokens: 1024` is a hard cost control — do not increase without explicit decision.
 
+## Project Structure
+
+```
+DxCoach/
+├── app/                    # Next.js App Router (pages, layout, API route)
+├── components/             # UI components (chat, mode selector, case selector)
+├── lib/                    # App logic (system prompt, knowledge file, cases)
+│   └── cases/              # Pre-loaded case data (one file per case)
+├── docs/                   # Planning and reference documents (not deployed)
+└── public/                 # Static assets
+```
+
 ## Architecture
 
-See `DxCoach_Technical_Plan.md` for the full architecture reference.
+See `docs/DxCoach_Technical_Plan.md` for the full architecture reference.
