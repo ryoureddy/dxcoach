@@ -1,10 +1,24 @@
 // Pre-loaded case: Acute Dyspnea — Pulmonary Embolism vs. Acute Decompensated Heart Failure
 
-export const PE_VS_ADHF = {
+export interface Case {
+  id: string;
+  title: string;
+  subtitle: string;
+  difficulty: "Beginner" | "Intermediate" | "Advanced";
+  organSystems: string[];
+  primaryDiagnosisId: string; // illness script id
+  competingDiagnoses: string[]; // illness script ids for top competing diagnoses
+  casePrompt: string;
+}
+
+export const PE_VS_ADHF: Case = {
   id: "pe-vs-adhf",
   title: "Acute Dyspnea: PE vs ADHF",
   subtitle: "68-year-old male with sudden shortness of breath",
   difficulty: "Intermediate",
+  organSystems: ["Pulmonary", "Cardiovascular"],
+  primaryDiagnosisId: "pe",
+  competingDiagnoses: ["adhf", "pneumonia"],
 
   // This gets injected as the first hidden user message to kick off the case
   casePrompt: `The student has selected a pre-loaded case. Here is the full case data:
@@ -67,4 +81,4 @@ Begin with Phase 1 — present only the triage snapshot and ask for the student'
 };
 
 // Registry of all available cases
-export const CASES = [PE_VS_ADHF];
+export const CASES: Case[] = [PE_VS_ADHF];

@@ -2,8 +2,10 @@
 
 import { useState, useRef, useEffect } from "react";
 import MessageBubble from "./MessageBubble";
+import { CASES } from "@/lib/cases/pe-vs-adhf";
+import { ILLNESS_SCRIPTS } from "@/lib/illness-scripts";
 
-type Mode = "practice" | "generate" | "present";
+type Mode = "practice" | "test-me" | "present";
 
 interface Message {
   role: "user" | "assistant";
@@ -17,8 +19,8 @@ interface ChatInterfaceProps {
 }
 
 const modeLabels: Record<Mode, string> = {
-  practice: "Practice a Case",
-  generate: "Generate a Case",
+  practice: "Pre-loaded Case",
+  "test-me": "Test Me",
   present: "Present to Attending",
 };
 
@@ -32,6 +34,7 @@ export default function ChatInterface({
   const [isLoading, setIsLoading] = useState(false);
   const [streamingContent, setStreamingContent] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [showPostCase, setShowPostCase] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const hasInitialized = useRef(false);
@@ -200,6 +203,21 @@ export default function ChatInterface({
             </div>
           )}
 
+          {/* Post-case review card */}
+          {showPostCase && <PostCaseCard caseId={caseId} onNewSession={onNewSession} />}
+
+          {/* End Case & Review button */}
+          {!showPostCase && messages.length >= 10 && !isLoading && mode !== "present" && (
+            <div className="flex justify-center mb-4">
+              <button
+                onClick={() => setShowPostCase(true)}
+                className="text-sm font-medium text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10 px-4 py-2 rounded-lg border border-[var(--color-primary)] transition-colors"
+              >
+                End Case &amp; Review
+              </button>
+            </div>
+          )}
+
           <div ref={bottomRef} />
         </div>
       </div>
@@ -240,6 +258,95 @@ export default function ChatInterface({
           DxCoach is for educational use only. Never enter real patient
           identifiers.
         </p>
+      </div>
+    </div>
+  );
+}
+
+// --- Post-Case Review Card ---
+
+function PostCaseCard({
+  caseId,
+  onNewSession,
+}: {
+  caseId?: string;
+  onNewSession: () => void;
+}) {
+  const selectedCase = caseId ? CASES.find((c) => c.id === caseId) : null;
+
+  // Look up illness scripts for the case's diagnoses
+  const scriptLinks: { id: string; diagnosis: string }[] = [];
+  if (selectedCase) {
+    const allIds = [
+      selectedCase.primaryDiagnosisId,
+      ...selectedCase.competingDiagnoses,
+    ];
+    for (const id of allIds) {
+      const script = ILLNESS_SCRIPTS.find((s) => s.id === id);
+      if (script) {
+        scriptLinks.push({ id: script.id, diagnosis: script.diagnosis });
+      }
+    }
+  }
+
+  // Find AMBOSS link for primary diagnosis
+  const primaryScript = selectedCase
+    ? ILLNESS_SCRIPTS.find((s) => s.id === selectedCase.primaryDiagnosisId)
+    : null;
+  const ambossUrl = primaryScript?.ambossUrl || "";
+
+  return (
+    <div
+      className="mb-4 p-5 rounded-lg bg-[var(--color-surface)] border border-[var(--color-primary)]/30"
+      style={{ boxShadow: "var(--shadow-soft)" }}
+    >
+      <h3
+        className="font-semibold text-[var(--color-text-primary)] mb-3"
+        style={{ fontFamily: "var(--font-heading)" }}
+      >
+        Case Complete — Review Resources
+      </h3>
+
+      {scriptLinks.length > 0 ? (
+        <>
+          <p className="text-sm text-[var(--color-text-secondary)] mb-3">
+            Illness scripts worth reviewing from this case:
+          </p>
+          <ul className="space-y-1.5 mb-4">
+            {scriptLinks.map((link) => (
+              <li
+                key={link.id}
+                className="text-sm text-[var(--color-primary)] font-medium"
+              >
+                • {link.diagnosis}
+              </li>
+            ))}
+          </ul>
+          {ambossUrl && (
+            <a
+              href={ambossUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block text-sm font-medium text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10 px-4 py-2 rounded-lg border border-[var(--color-primary)] transition-colors mb-4"
+            >
+              AMBOSS: {scriptLinks[0]?.diagnosis} →
+            </a>
+          )}
+        </>
+      ) : (
+        <p className="text-sm text-[var(--color-text-secondary)] mb-4">
+          Great work on that case! Review the illness scripts in the library to
+          reinforce what you learned.
+        </p>
+      )}
+
+      <div>
+        <button
+          onClick={onNewSession}
+          className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-colors"
+        >
+          Start a New Case
+        </button>
       </div>
     </div>
   );
