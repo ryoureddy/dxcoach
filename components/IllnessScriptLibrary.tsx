@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { ILLNESS_SCRIPTS, type IllnessScript } from "@/lib/illness-scripts";
+import type { IllnessScript } from "@/lib/illness-scripts";
 
 interface IllnessScriptLibraryProps {
   onStartCase: (caseId: string) => void;
+  illnessScripts: IllnessScript[];
 }
 
 // Group scripts by organ system (a script can appear in multiple groups)
@@ -24,11 +25,12 @@ function groupByOrganSystem(scripts: IllnessScript[]) {
 
 export default function IllnessScriptLibrary({
   onStartCase,
+  illnessScripts,
 }: IllnessScriptLibraryProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const selectedScript = selectedId
-    ? ILLNESS_SCRIPTS.find((s) => s.id === selectedId) ?? null
+    ? illnessScripts.find((s) => s.id === selectedId) ?? null
     : null;
 
   // Detail view
@@ -43,7 +45,7 @@ export default function IllnessScriptLibrary({
   }
 
   // List view
-  const grouped = groupByOrganSystem(ILLNESS_SCRIPTS);
+  const grouped = groupByOrganSystem(illnessScripts);
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
@@ -90,7 +92,7 @@ export default function IllnessScriptLibrary({
                   </div>
                 </div>
                 <p className="text-sm text-[var(--color-text-secondary)] line-clamp-2">
-                  {script.enablingConditions}
+                  {script.epidemiology}
                 </p>
               </button>
             ))}
@@ -142,22 +144,37 @@ function IllnessScriptDetail({
         </div>
       </div>
 
-      {/* Three-part illness script */}
+      {/* Core illness script sections */}
       <div className="flex flex-col gap-4 mb-8">
         <ScriptSection
-          title="Enabling Conditions"
+          title="Pathophysiology"
+          subtitle="What goes wrong at the cellular and organ level"
+          content={script.pathophysiology}
+        />
+        <ScriptSection
+          title="Epidemiology"
           subtitle="Who gets this disease and why"
-          content={script.enablingConditions}
+          content={script.epidemiology}
         />
         <ScriptSection
-          title="Fault"
-          subtitle="What goes wrong — the pathophysiology"
-          content={script.fault}
+          title="Time Course"
+          subtitle="How the disease evolves over time"
+          content={script.timeCourse}
         />
         <ScriptSection
-          title="Consequences"
-          subtitle="What it looks like — symptoms, signs, and findings"
-          content={script.consequences}
+          title="Salient Symptoms & Signs"
+          subtitle="What it looks like — the clinical presentation"
+          content={script.salientSymptomsAndSigns}
+        />
+        <ScriptSection
+          title="Diagnostics"
+          subtitle="How to confirm the diagnosis"
+          content={script.diagnostics}
+        />
+        <ScriptSection
+          title="Treatment"
+          subtitle="How to manage and treat"
+          content={script.treatment}
         />
       </div>
 
@@ -180,6 +197,47 @@ function IllnessScriptDetail({
           ))}
         </ul>
       </div>
+
+      {/* Disease Mimickers */}
+      {script.diseaseMimickers.length > 0 && (
+        <div className="mb-8">
+          <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-3">
+            Disease Mimickers
+          </h3>
+          <ul className="space-y-2">
+            {script.diseaseMimickers.map((m, i) => (
+              <li
+                key={i}
+                className="flex gap-2 text-sm text-[var(--color-text-secondary)]"
+              >
+                <span className="text-[var(--color-text-muted)] shrink-0 mt-0.5">
+                  •
+                </span>
+                {m}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Sources */}
+      {script.sources.length > 0 && (
+        <div className="mb-8">
+          <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-3">
+            Sources
+          </h3>
+          <ol className="space-y-1 list-decimal list-inside">
+            {script.sources.map((s, i) => (
+              <li
+                key={i}
+                className="text-xs text-[var(--color-text-muted)] leading-relaxed"
+              >
+                {s}
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
 
       {/* Action buttons */}
       <div className="flex gap-3 flex-wrap">
@@ -222,6 +280,8 @@ function ScriptSection({
   subtitle: string;
   content: string;
 }) {
+  if (!content) return null;
+
   return (
     <div
       className="p-5 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)]"
@@ -231,9 +291,9 @@ function ScriptSection({
         {title}
       </h3>
       <p className="text-xs text-[var(--color-text-muted)] mb-3">{subtitle}</p>
-      <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed">
+      <div className="text-sm text-[var(--color-text-secondary)] leading-relaxed whitespace-pre-line">
         {content}
-      </p>
+      </div>
     </div>
   );
 }

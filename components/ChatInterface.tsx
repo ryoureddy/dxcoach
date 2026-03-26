@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import MessageBubble from "./MessageBubble";
 import { CASES } from "@/lib/cases/pe-vs-adhf";
-import { ILLNESS_SCRIPTS } from "@/lib/illness-scripts";
+import type { IllnessScript } from "@/lib/illness-scripts";
 
 type Mode = "practice" | "test-me" | "present";
 
@@ -16,6 +16,7 @@ interface ChatInterfaceProps {
   mode: Mode;
   caseId?: string;
   onNewSession: () => void;
+  illnessScripts: IllnessScript[];
 }
 
 const modeLabels: Record<Mode, string> = {
@@ -28,6 +29,7 @@ export default function ChatInterface({
   mode,
   caseId,
   onNewSession,
+  illnessScripts,
 }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -204,7 +206,7 @@ export default function ChatInterface({
           )}
 
           {/* Post-case review card */}
-          {showPostCase && <PostCaseCard caseId={caseId} onNewSession={onNewSession} />}
+          {showPostCase && <PostCaseCard caseId={caseId} onNewSession={onNewSession} illnessScripts={illnessScripts} />}
 
           {/* End Case & Review button */}
           {!showPostCase && messages.length >= 10 && !isLoading && mode !== "present" && (
@@ -268,9 +270,11 @@ export default function ChatInterface({
 function PostCaseCard({
   caseId,
   onNewSession,
+  illnessScripts,
 }: {
   caseId?: string;
   onNewSession: () => void;
+  illnessScripts: IllnessScript[];
 }) {
   const selectedCase = caseId ? CASES.find((c) => c.id === caseId) : null;
 
@@ -282,7 +286,7 @@ function PostCaseCard({
       ...selectedCase.competingDiagnoses,
     ];
     for (const id of allIds) {
-      const script = ILLNESS_SCRIPTS.find((s) => s.id === id);
+      const script = illnessScripts.find((s) => s.id === id);
       if (script) {
         scriptLinks.push({ id: script.id, diagnosis: script.diagnosis });
       }
@@ -291,7 +295,7 @@ function PostCaseCard({
 
   // Find AMBOSS link for primary diagnosis
   const primaryScript = selectedCase
-    ? ILLNESS_SCRIPTS.find((s) => s.id === selectedCase.primaryDiagnosisId)
+    ? illnessScripts.find((s) => s.id === selectedCase.primaryDiagnosisId)
     : null;
   const ambossUrl = primaryScript?.ambossUrl || "";
 
