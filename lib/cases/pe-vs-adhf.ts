@@ -13,8 +13,8 @@ export interface Case {
 
 export const PE_VS_ADHF: Case = {
   id: "pe-vs-adhf",
-  title: "Acute Dyspnea: PE vs ADHF",
-  subtitle: "68-year-old male with sudden shortness of breath",
+  title: "Acute Dyspnea in a Post-Surgical Patient",
+  subtitle: "68M • Sudden shortness of breath • SpO2 90% on room air",
   difficulty: "Intermediate",
   organSystems: ["Pulmonary", "Cardiovascular"],
   primaryDiagnosisId: "pe",

@@ -12,22 +12,19 @@ const difficultyColors: Record<string, string> = {
   Advanced: "text-[var(--color-tertiary)] bg-[var(--color-tertiary)]/10",
 };
 
-// Group cases by organ system (a case can appear in multiple groups)
-function groupByOrganSystem(cases: Case[]) {
+// Group cases by primary organ system (first tag) — each case appears once
+function groupByPrimarySystem(cases: Case[]) {
   const groups: Record<string, Case[]> = {};
   for (const c of cases) {
-    for (const system of c.organSystems) {
-      if (!groups[system]) groups[system] = [];
-      if (!groups[system].some((existing) => existing.id === c.id)) {
-        groups[system].push(c);
-      }
-    }
+    const primary = c.organSystems[0];
+    if (!groups[primary]) groups[primary] = [];
+    groups[primary].push(c);
   }
   return Object.entries(groups).sort(([a], [b]) => a.localeCompare(b));
 }
 
 export default function CaseSelector({ onSelect }: CaseSelectorProps) {
-  const grouped = groupByOrganSystem(CASES);
+  const grouped = groupByPrimarySystem(CASES);
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
@@ -36,11 +33,11 @@ export default function CaseSelector({ onSelect }: CaseSelectorProps) {
           className="text-2xl font-medium text-[var(--color-text-primary)] mb-2"
           style={{ fontFamily: "var(--font-heading)" }}
         >
-          Pre-loaded Cases
+          Cases
         </h2>
         <p className="text-sm text-[var(--color-text-secondary)]">
-          Choose a case to practice. You&apos;ll know the diagnosis going in —
-          your job is to walk through the complete reasoning chain.
+          Choose a case to practice. Work through the clinical reasoning —
+          the diagnosis is revealed at the end of each session.
         </p>
       </div>
 
